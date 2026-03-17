@@ -30,26 +30,79 @@ public class Transfer {
 
     private String attachment;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String status;
+    private TransferStatus status;
 
     protected Transfer() {}
 
     public Transfer(String senderTag, BigDecimal amount, String recipientTag, String description, String attachment) {
-        this.ID = UUID.randomUUID();
         this.senderTag = senderTag;
         this.amount = amount;
         this.dateTime = LocalDateTime.now();
         this.recipientTag = recipientTag;
         this.description = description;
         this.attachment = attachment;
-        this.status = "DRAFT";
+        this.status = TransferStatus.DRAFT;
     }
 
-    public void transferMoney() {
-        this.dateTime = LocalDateTime.now();
-        this.status = "SENT";
+    public UUID getID() {
+        return ID;
+    }
 
-        // Transfer in DB
+    public String getSenderTag() {
+        return senderTag;
+    }
+
+    public void setSenderTag(String senderTag) {
+        this.senderTag = senderTag;
+    }
+
+    public String getRecipientTag() {
+        return recipientTag;
+    }
+
+    public void setRecipientTag(String recipientTag) {
+        this.recipientTag = recipientTag;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getAttachment() {
+        return attachment;
+    }
+
+    public void setAttachment(String attachment) {
+        this.attachment = attachment;
+    }
+
+    public TransferStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TransferStatus transferStatus) {
+        this.status = transferStatus;
     }
 }

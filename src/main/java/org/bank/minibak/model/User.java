@@ -28,7 +28,6 @@ public abstract class User {
     protected User() {}
 
     public User(String email, String password, String firstName, String lastName) {
-        this.id = UUID.randomUUID();
         this.email = email;
         this.password = password;
         this.firstName = firstName;
