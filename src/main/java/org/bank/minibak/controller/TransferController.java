@@ -4,10 +4,9 @@ import org.bank.minibak.model.Transfer;
 import org.bank.minibak.service.TransferService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/transfers")
@@ -24,5 +23,12 @@ public class TransferController {
         Transfer createdTransfer = transferService.createTransfer(transfer);
 
         return new ResponseEntity<>(createdTransfer, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/send/{transferID}")
+    public ResponseEntity<Transfer> sendTransfer(@PathVariable UUID transferID) {
+        Transfer createdTransfer = transferService.sendTransfer(transferID);
+
+        return new ResponseEntity<>(createdTransfer, HttpStatus.OK);
     }
 }

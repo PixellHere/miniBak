@@ -32,8 +32,6 @@ public class Client extends User{
         this.profilePicture = profilePicture;
     }
 
-
-
     public String getTransferTag() {
         return transferTag;
     }

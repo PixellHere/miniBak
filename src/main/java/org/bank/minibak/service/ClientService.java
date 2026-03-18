@@ -18,7 +18,7 @@ public class ClientService {
 
     public Client registerNewClient(Client newClient) {
 
-        if (newClient != null) {
+        if (newClient == null) {
             throw new IllegalArgumentException("Client must not be null");
         }
 
