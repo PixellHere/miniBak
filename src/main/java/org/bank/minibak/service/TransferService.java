@@ -42,6 +42,10 @@ public class TransferService {
 
         Transfer transfer = transferRepository.getReferenceById(transferID);
 
+        if (transfer.getStatus() != TransferStatus.DRAFT) {
+            throw new RuntimeException("Transfer already sent");
+        }
+
         Client sender = clientRepository.findByTransferTag(transfer.getSenderTag()).orElse(null);
         Client recipient = clientRepository.findByTransferTag(transfer.getRecipientTag()).orElse(null);
 
