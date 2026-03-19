@@ -1,11 +1,13 @@
 package org.bank.minibak.controller;
 
+import org.bank.minibak.dto.requests.TransferRequest;
 import org.bank.minibak.model.Transfer;
 import org.bank.minibak.service.TransferService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.UUID;
 
 @RestController
@@ -19,15 +21,15 @@ public class TransferController {
     }
 
     @PostMapping
-    public ResponseEntity<Transfer> createTransfer(@RequestBody Transfer transfer) {
-        Transfer createdTransfer = transferService.createTransfer(transfer);
+    public ResponseEntity<Transfer> createTransfer(@RequestBody TransferRequest transferRequest, Principal principal) {
+        Transfer createdTransfer = transferService.createTransfer(transferRequest, principal);
 
         return new ResponseEntity<>(createdTransfer, HttpStatus.CREATED);
     }
 
     @PostMapping("/send/{transferID}")
-    public ResponseEntity<Transfer> sendTransfer(@PathVariable UUID transferID) {
-        Transfer createdTransfer = transferService.sendTransfer(transferID);
+    public ResponseEntity<Transfer> sendTransfer(@PathVariable UUID transferID, Principal principal) {
+        Transfer createdTransfer = transferService.sendTransfer(transferID, principal);
 
         return new ResponseEntity<>(createdTransfer, HttpStatus.OK);
     }

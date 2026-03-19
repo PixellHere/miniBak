@@ -1,4 +1,4 @@
-package org.bank.minibak.dto;
+package org.bank.minibak.dto.requests;
 
 public record LoginRequest(
         String email,

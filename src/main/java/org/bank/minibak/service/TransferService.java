@@ -1,5 +1,6 @@
 package org.bank.minibak.service;
 
+import org.bank.minibak.dto.requests.TransferRequest;
 import org.bank.minibak.model.Client;
 import org.bank.minibak.model.Transfer;
 import org.bank.minibak.model.TransferStatus;
@@ -8,7 +9,9 @@ import org.bank.minibak.repository.TransferRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -22,25 +25,40 @@ public class TransferService {
         this.clientRepository = clientRepository;
     }
 
-    public Transfer createTransfer(Transfer transfer) {
-        if(clientRepository.findByTransferTag(transfer.getRecipientTag()).isEmpty()) {
+    public Transfer createTransfer(TransferRequest transferRequest, Principal principal) {
+        String senderEmail = principal.getName();
+        Transfer transfer;
+        Client client = clientRepository.findByEmail(senderEmail).orElseThrow(() -> new RuntimeException("Client not found"));
+
+        if(clientRepository.findByTransferTag(transferRequest.recipientTag()).isEmpty()) {
             throw new RuntimeException("Recipient tag does not exist");
         }
 
-        if(transfer.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+        if(transferRequest.amount().compareTo(BigDecimal.ZERO) <= 0) {
             throw new RuntimeException("Amount must be greater than zero");
         }
+
+        transfer = new Transfer(client.getTransferTag(), transferRequest.amount(),
+                transferRequest.recipientTag(), transferRequest.description(), transferRequest.attachment());
 
         return transferRepository.save(transfer);
     }
 
-    public Transfer sendTransfer(UUID transferID) {
+    public Transfer sendTransfer(UUID transferID, Principal principal) {
 
         if(!transferRepository.existsByID(transferID)) {
             throw new RuntimeException("Transfer does not exist");
         }
 
+        String senderEmail = principal.getName();
+        Client client = clientRepository.findByEmail(senderEmail).orElseThrow(() -> new RuntimeException("Client not found"));
+        String senderTagFromToken = client.getTransferTag();
         Transfer transfer = transferRepository.getReferenceById(transferID);
+
+        if(!Objects.equals(senderTagFromToken, transfer.getSenderTag())) {
+            System.err.println("Sender tag from token does not match sender tag in transfer");
+            throw new RuntimeException("Sender tag from token does not match sender tag in transfer");
+        }
 
         if (transfer.getStatus() != TransferStatus.DRAFT) {
             throw new RuntimeException("Transfer already sent");

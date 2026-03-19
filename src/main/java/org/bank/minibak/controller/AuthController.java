@@ -1,7 +1,7 @@
 package org.bank.minibak.controller;
 
-import org.bank.minibak.dto.LoginRequest;
-import org.bank.minibak.dto.TokenResponse;
+import org.bank.minibak.dto.requests.LoginRequest;
+import org.bank.minibak.dto.responses.TokenResponse;
 import org.bank.minibak.service.JwtService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
