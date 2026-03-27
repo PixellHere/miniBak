@@ -7,6 +7,8 @@ import org.bank.minibak.model.Transfer;
 import org.bank.minibak.model.TransferStatus;
 import org.bank.minibak.repository.ClientRepository;
 import org.bank.minibak.repository.TransferRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -164,5 +166,38 @@ public class TransferService {
         transferRepository.save(transfer);
 
         return transfer;
+    }
+
+    public Transfer getTransfer(UUID transferID, Principal principal) {
+        if(!transferRepository.existsByID(transferID)) {
+            throw new RuntimeException("Transfer does not exist");
+        }
+
+        Client client = clientRepository.findByEmail(principal.getName()).orElseThrow(() -> new RuntimeException("Client not found"));
+        Transfer transfer = transferRepository.getReferenceById(transferID);
+
+        boolean isSender = Objects.equals(client.getTransferTag(), transfer.getSenderTag());
+        boolean isRecipient = Objects.equals(client.getTransferTag(), transfer.getRecipientTag());
+        boolean isApproved = transfer.getStatus() == TransferStatus.APPROVED;
+
+        boolean hasAccess = isSender || (isRecipient && isApproved);
+
+        if (!hasAccess) {
+            System.err.println("Access denied: Wrong token / User doesn't have access ");
+            throw new RuntimeException("Access denied: You don't have permission to view this transfer");
+        }
+
+        return transfer;
+    }
+
+    public Page<Transfer> getTransfersHistory(Integer days, Pageable pageable, Principal principal) {
+        String senderEmail = principal.getName();
+        Client client = clientRepository.findByEmail(senderEmail).orElseThrow(() -> new RuntimeException("Client not found"));
+
+        int daysToSubtract = (days != null && days > 0) ? days : 30;
+        LocalDateTime endDate = LocalDateTime.now();
+        LocalDateTime startDate = endDate.minusDays(daysToSubtract);
+
+        return transferRepository.findTransferHistory(client.getTransferTag(), startDate, endDate,pageable);
     }
 }

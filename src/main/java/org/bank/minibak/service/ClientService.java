@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 
 @Service
 public class ClientService {
@@ -32,4 +33,13 @@ public class ClientService {
 
         return clientRepository.save(newClient);
     }
+
+    public BigDecimal getBalance(Principal principal){
+        String clientEmail = principal.getName();
+
+        Client client = clientRepository.findByEmail(clientEmail).orElseThrow(() -> new RuntimeException("Client not found"));
+
+        return client.getBalance();
+    }
+
 }

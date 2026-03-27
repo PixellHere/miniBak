@@ -4,10 +4,10 @@ import org.bank.minibak.model.Client;
 import org.bank.minibak.service.ClientService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/clients")
@@ -24,5 +24,12 @@ public class ClientController {
         Client savedClient = clientService.registerNewClient(client);
 
         return new ResponseEntity<>(savedClient, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/balance")
+    public ResponseEntity<BigDecimal> getBalance(Principal principal) {
+        BigDecimal balance = clientService.getBalance(principal);
+
+        return new ResponseEntity<>(balance, HttpStatus.OK);
     }
 }
