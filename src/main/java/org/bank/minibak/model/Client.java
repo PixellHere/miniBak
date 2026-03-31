@@ -29,7 +29,11 @@ public class Client extends User{
         this.transferTag = transferID;
         this.phoneNumber = phoneNumber;
         this.balance = BigDecimal.ZERO;
-        this.profilePicture = profilePicture;
+        if(profilePicture != null) {
+            this.profilePicture = profilePicture;
+        } else {
+            this.profilePicture = "default.png";
+        }
     }
 
     public String getTransferTag() {
